@@ -1,28 +1,31 @@
 #pragma once
 
 #include "CommonHeader.h"
+#include "Gainput/InputHandler.h"
 
-struct HelloWorldLabel: public Label
-{
-    HelloWorldLabel()
-    {
-        setText("HelloWorld", dontSendNotification);
-        setJustificationType(Justification::centred);
-        setFont(Font(20));
-    }
-};
-
-class MainComponent   : public Component
+class MainComponent
+    : public Component
+    , public Timer
 {
 public:
+    MainComponent()
+    {
+        setSize(600, 400);
+        startTimerHz(200);
+    }
 
-    MainComponent();
+    void timerCallback() override
+    {
+        input.pollUpdates();
+    }
 
-    void paint (Graphics&) override;
-    void resized() override;
+    void paint(Graphics& g) override
+    {
+        g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
+    }
 
 private:
-    HelloWorldLabel helloWorld;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
+    Label label;
+    GainputHelper::InputState input;
 };
